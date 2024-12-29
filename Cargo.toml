@@ -1,0 +1,11 @@
+[package]
+name = "ferris_chats"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = {version =  "1.42.0", features = ["rt-multi-thread"] }
+axum = { version = "0.8.0-rc.1", features = ["macros"] }
+serde = { version = "1.0.216", features = ["derive"] }
+chrono = "0.4.39"
+axum-server = "*"
