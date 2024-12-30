@@ -123,16 +123,14 @@ async fn messages_from_time(
     Path(time): Path<String>,
 ) -> Result<Json<Messages>, StatusCode> {
     let messages = messages.data.lock().unwrap().clone();
-    let time = match time.parse::<DateTime<Utc>>() {
-        Ok(t) => t,
-        Err(_e) => return Err(StatusCode::BAD_REQUEST),
-    };
-    let index = match messages.last_index_at_time(time) {
-        Some(index) => index,
-        None => return Err(StatusCode::NOT_FOUND),
+    let Some(index) = messages.last_index_at_time(
+        time.parse::<DateTime<Utc>>()
+            .map_err(|_| StatusCode::BAD_REQUEST)?,
+    ) else {
+        return Err(StatusCode::NOT_FOUND);
     };
     match messages.clone().get_range(index, messages.message_count()) {
         Some(res) => Ok(Json(res)),
-        None => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        None => Err(StatusCode::NOT_FOUND),
     }
 }
