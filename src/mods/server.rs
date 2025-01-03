@@ -6,14 +6,15 @@ use axum::{
 use chrono::{DateTime, Utc};
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
-use serde_json::{from_reader, to_vec};
-use std::io::BufReader;
+use serde_json::{from_str, to_vec};
 use std::sync::{Arc, Mutex};
 use std::{
     ffi::OsString,
-    fs::{write, File},
-    path::PathBuf,
+    fs::write,
+    path::PathBuf
 };
+use std::fs::{create_dir, read_to_string};
+
 static FILENAME: &str = "messages.json";
 #[derive(Clone)]
 pub struct AppState {
@@ -24,6 +25,11 @@ pub struct Message {
     content: String,
     author: Option<String>,
     time: DateTime<Utc>,
+}
+#[derive(Deserialize, Serialize, Clone)]
+pub struct IncomingMessage {
+    pub content: String,
+    pub author: Option<String>
 }
 impl Message {
     fn new(content: String, author: Option<String>) -> Message {
@@ -48,18 +54,20 @@ impl Messages {
         Self::from_messages().unwrap_or(Messages::new())
     }
     fn from_messages() -> Result<Self, Box<dyn std::error::Error>> {
-        Ok(from_reader(BufReader::new(File::open(file_in_path(String::from(FILENAME)))?))?)
+        println!("{:?}", read_to_string(file_in_path(String::from(FILENAME)))?);
+        Ok(from_str(read_to_string(file_in_path(String::from(FILENAME)))?.as_str())?)
     }
-    pub fn save_messages(&self) {
+    pub fn save_messages(&self)  {
+        if let Ok(_) = create_dir(&file_in_path(String::from(""))) {}
         write(
             file_in_path(String::from(FILENAME)),
-            to_vec(&self.messages).unwrap(),
+            to_vec(&self).unwrap(),
         )
         .expect("Unable to write file");
     }
 
-    fn add(&mut self, message: Message) {
-        self.messages.push(message);
+    fn add(&mut self, content: String, author: Option<String>) {
+        self.messages.push(Message::new(content, author));
     }
     fn get_range(self, start: usize, end: usize) -> Option<Self> {
         let message_slice = self.messages.get(start..end);
@@ -96,13 +104,12 @@ pub async fn all_messages(State(messages): State<AppState>) -> Json<Messages> {
 pub async fn message_count(State(messages): State<AppState>) -> String {
     messages.data.lock().unwrap().message_count().to_string()
 }
-#[axum::debug_handler]
-pub async fn receive_message(State(messages): State<AppState>, Json(message): Json<Message>) {
+pub async fn receive_message(State(messages): State<AppState>, Json(message): Json<IncomingMessage>) {
     messages
         .data
         .lock()
         .unwrap()
-        .add(Message::new(message.content, message.author));
+        .add(message.content, message.author);
 }
 pub async fn messages_from_time(
     State(messages): State<AppState>,
@@ -115,7 +122,7 @@ pub async fn messages_from_time(
     ) else {
         return Err(StatusCode::NOT_FOUND);
     };
-    match messages.clone().get_range(index, messages.message_count()) {
+    match messages.clone().get_range(index, messages.message_count()+1) {
         Some(res) => Ok(Json(res)),
         None => Err(StatusCode::NOT_FOUND),
     }
