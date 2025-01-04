@@ -12,7 +12,7 @@ use ctrlc;
 
 mod mods;
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() {
     let messages = AppState {
         data: Arc::new(Mutex::new(Messages::from_existing_else_new().to_owned())),
     };
@@ -30,6 +30,6 @@ async fn main() -> std::io::Result<()> {
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     Server::bind(addr)
         .serve(app.into_make_service())
-        .await?;
-    Ok(())
+        .await
+        .unwrap()
 }
