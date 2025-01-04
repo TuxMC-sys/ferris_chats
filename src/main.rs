@@ -8,7 +8,6 @@ use std::{
     net::SocketAddr,
     sync::{Arc, Mutex},
 };
-use ctrlc;
 
 mod mods;
 #[tokio::main]
@@ -23,10 +22,16 @@ async fn main() {
         .route("/messages/count", get(message_count))
         .route("/messages/receive", post(receive_message))
         .with_state(messages.clone());
-    ctrlc::set_handler(move ||{
-        messages.clone().data.lock().expect("Mutex poisoned, messages not saved").save_messages();
+    ctrlc::set_handler(move || {
+        messages
+            .clone()
+            .data
+            .lock()
+            .expect("Mutex poisoned, messages not saved")
+            .save_messages();
         std::process::exit(0);
-    }).expect("Error setting Ctrl-C handler");
+    })
+    .expect("Error setting Ctrl-C handler");
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     Server::bind(addr)
         .serve(app.into_make_service())

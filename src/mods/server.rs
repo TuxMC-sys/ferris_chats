@@ -7,13 +7,9 @@ use chrono::{DateTime, Utc};
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_vec};
-use std::sync::{Arc, Mutex};
-use std::{
-    ffi::OsString,
-    fs::write,
-    path::PathBuf
-};
 use std::fs::{create_dir, read_to_string};
+use std::sync::{Arc, Mutex};
+use std::{ffi::OsString, fs::write, path::PathBuf};
 
 static FILENAME: &str = "messages.json";
 #[derive(Clone)]
@@ -29,10 +25,10 @@ pub struct Message {
 #[derive(Deserialize, Serialize, Clone)]
 pub struct IncomingMessage {
     pub content: String,
-    pub author: Option<String>
+    pub author: Option<String>,
 }
 impl Message {
-    fn new(content: String, author: Option<String>) -> Message {
+    pub fn new(content: String, author: Option<String>) -> Message {
         Message {
             content,
             author: Some(author.unwrap_or_else(|| String::from("Unknown"))),
@@ -54,16 +50,18 @@ impl Messages {
         Self::from_messages().unwrap_or(Messages::new())
     }
     fn from_messages() -> Result<Self, Box<dyn std::error::Error>> {
-        println!("{:?}", read_to_string(file_in_path(String::from(FILENAME)))?);
-        Ok(from_str(read_to_string(file_in_path(String::from(FILENAME)))?.as_str())?)
+        println!(
+            "{:?}",
+            read_to_string(file_in_path(String::from(FILENAME)))?
+        );
+        Ok(from_str(
+            read_to_string(file_in_path(String::from(FILENAME)))?.as_str(),
+        )?)
     }
-    pub fn save_messages(&self)  {
-        if let Ok(_) = create_dir(&file_in_path(String::from(""))) {}
-        write(
-            file_in_path(String::from(FILENAME)),
-            to_vec(&self).unwrap(),
-        )
-        .expect("Unable to write file");
+    pub fn save_messages(&self) {
+        let _ = create_dir(file_in_path(String::from(""))).is_ok();
+        write(file_in_path(String::from(FILENAME)), to_vec(&self).unwrap())
+            .expect("Unable to write file");
     }
 
     fn add(&mut self, content: String, author: Option<String>) {
@@ -104,7 +102,10 @@ pub async fn all_messages(State(messages): State<AppState>) -> Json<Messages> {
 pub async fn message_count(State(messages): State<AppState>) -> String {
     messages.data.lock().unwrap().message_count().to_string()
 }
-pub async fn receive_message(State(messages): State<AppState>, Json(message): Json<IncomingMessage>) {
+pub async fn receive_message(
+    State(messages): State<AppState>,
+    Json(message): Json<IncomingMessage>,
+) {
     messages
         .data
         .lock()
@@ -122,7 +123,10 @@ pub async fn messages_from_time(
     ) else {
         return Err(StatusCode::NOT_FOUND);
     };
-    match messages.clone().get_range(index, messages.message_count()+1) {
+    match messages
+        .clone()
+        .get_range(index, messages.message_count() + 1)
+    {
         Some(res) => Ok(Json(res)),
         None => Err(StatusCode::NOT_FOUND),
     }
