@@ -1,11 +1,11 @@
+use chrono::{DateTime, Utc};
+use dirs::home_dir;
+use serde::{Deserialize, Serialize};
+use serde_json::{from_str, to_vec};
 use std::ffi::OsString;
 use std::fs::{create_dir, read_to_string, write};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-use serde::{Deserialize, Serialize};
-use serde_json::{from_str, to_vec};
-use chrono::{DateTime, Utc};
-use dirs::home_dir;
 
 static FILENAME: &str = "messages.json";
 
@@ -60,16 +60,27 @@ impl Messages {
     pub fn add(&mut self, content: String, author: Option<String>) {
         self.messages.push(Message::new(content, author));
     }
-    pub(crate) fn get_range(self, start: usize, end: usize) -> Option<Self> {
+    pub fn add_message(&mut self, message: Message) {
+        self.messages.push(message);
+    }
+    pub fn add_messages(&mut self, new: &mut Messages) {
+        self.messages.append(&mut new.messages);
+    }
+    pub fn concat_message(self, message: Message) -> Messages {
+        let mut messages = self.messages.clone();
+        messages.push(message);
+        Messages { messages }
+    }
+    pub fn get_range(self, start: usize, end: usize) -> Option<Self> {
         let message_slice = self.messages.get(start..end);
         message_slice.map(|message_slice| Messages {
             messages: message_slice.to_owned().to_vec(),
         })
     }
-    pub(crate) fn message_count(&self) -> usize {
+    pub fn message_count(&self) -> usize {
         self.messages.len()
     }
-    pub(crate) fn last_index_at_time(&self, time: DateTime<Utc>) -> Option<usize> {
+    pub fn last_index_at_time(&self, time: DateTime<Utc>) -> Option<usize> {
         self.messages
             .clone()
             .into_iter()
@@ -89,7 +100,7 @@ pub fn file_in_path(file_name: String) -> OsString {
             String::from("/.ferris_chats/"),
             file_name,
         ]
-            .join(""),
+        .join(""),
     )
-        .into_os_string()
+    .into_os_string()
 }

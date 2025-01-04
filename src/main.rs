@@ -1,5 +1,5 @@
-use crate::mods::server::*;
 use crate::mods::data::*;
+use crate::mods::server::*;
 use axum::{
     routing::{get, post},
     Router,

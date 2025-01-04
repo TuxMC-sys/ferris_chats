@@ -1,10 +1,10 @@
+use crate::mods::data::{AppState, IncomingMessage, Messages};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
     Json,
 };
 use chrono::{DateTime, Utc};
-use crate::mods::data::{AppState, IncomingMessage, Messages};
 
 pub async fn get_messages(
     State(messages): State<AppState>,
