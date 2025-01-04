@@ -4,19 +4,16 @@ use reqwest::Client;
 fn hardcoded_server() -> String {
     String::from("http://localhost:3000/messages/")
 }
-async fn last_n_messages(number: u32) -> Messages {
+async fn last_n_messages(number: u32) -> Result<Messages, Box<dyn std::error::Error>> {
     let client = Client::builder().build().unwrap();
     let message_count: u32 = client
         .get(hardcoded_server() + "count")
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap()
-        .parse::<u32>()
-        .unwrap();
-    client
+        .await?
+        .parse::<u32>()?;
+    Ok(client
         .get(
             hardcoded_server()
                 + (if message_count - number > 0 {
@@ -30,18 +27,16 @@ async fn last_n_messages(number: u32) -> Messages {
                 + message_count.to_string().as_str(),
         )
         .send()
-        .await
-        .unwrap()
-        .json::<Messages>()
-        .await
-        .unwrap()
+        .await?
+        .json()
+        .await?)
 }
-async fn send(message: String, author: Option<String>) {
+async fn send(message: String, author: Option<String>) -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::builder().build().unwrap();
     client
-        .post(hardcoded_server() + "receive")
+        .post(hardcoded_server() + "/endpoint")
         .json(&Message::new(message, author))
         .send()
-        .await
-        .unwrap();
+        .await?;
+    Ok(())
 }

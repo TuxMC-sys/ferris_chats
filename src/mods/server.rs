@@ -50,10 +50,6 @@ impl Messages {
         Self::from_messages().unwrap_or(Messages::new())
     }
     fn from_messages() -> Result<Self, Box<dyn std::error::Error>> {
-        println!(
-            "{:?}",
-            read_to_string(file_in_path(String::from(FILENAME)))?
-        );
         Ok(from_str(
             read_to_string(file_in_path(String::from(FILENAME)))?.as_str(),
         )?)

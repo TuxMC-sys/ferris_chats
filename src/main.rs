@@ -20,7 +20,7 @@ async fn main() {
         .route("/messages/time/{time}", get(messages_from_time))
         .route("/messages/all", get(all_messages))
         .route("/messages/count", get(message_count))
-        .route("/messages/receive", post(receive_message))
+        .route("/messages/endpoint", post(receive_message))
         .with_state(messages.clone());
     ctrlc::set_handler(move || {
         messages
