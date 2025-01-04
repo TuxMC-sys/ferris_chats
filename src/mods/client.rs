@@ -1,4 +1,4 @@
-use super::server::*;
+use super::data::*;
 use reqwest::Client;
 
 fn hardcoded_server() -> String {
