@@ -1,3 +1,2 @@
 [workspace]
-workplace.resolver = "2"
 members = ["ferris_chats_client", "ferris_chats_server", "ferris_chats_data"]
