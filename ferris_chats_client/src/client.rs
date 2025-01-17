@@ -1,4 +1,4 @@
-use super::data::*;
+use ferris_chats_data::{Messages, Message};
 use reqwest::Client;
 use std::sync::Arc;
 use std::time::Duration;
@@ -6,7 +6,7 @@ use tokio::sync::Mutex;
 use tokio::{task, time};
 async fn init() {
     let mut messages = Arc::new(Mutex::new(
-        last_n_messages(100).await.expect("REPLACE ME").clone(),
+        last_n_messages(100).await.expect("").clone(),
     ));
     task::spawn(async move {
         let mut interval = time::interval(Duration::from_secs(1));

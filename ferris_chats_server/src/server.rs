@@ -1,4 +1,4 @@
-use crate::mods::data::{AppState, IncomingMessage, Messages};
+use ferris_chats_data::{AppState, IncomingMessage, Messages};
 use axum::{
     extract::{Path, State},
     http::StatusCode,

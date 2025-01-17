@@ -1,0 +1,10 @@
+[package]
+name = "ferris_chats_client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ferris_chats_data = {path = "../ferris_chats_data"}
+reqwest = {version = "0.12.12", features = ["json"] }
+tokio = "1.43.0"
+cursive = "0.21.1"

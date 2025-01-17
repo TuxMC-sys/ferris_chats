@@ -1,0 +1,10 @@
+[package]
+name = "ferris_chats_data"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = { version = "0.4.39", features = ["serde"] }
+dirs = "6.0.0"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.135"
