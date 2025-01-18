@@ -37,6 +37,12 @@ impl Message {
 pub struct Messages {
     pub messages: Vec<Message>,
 }
+impl Default for Messages {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Messages {
     pub fn new() -> Self {
         Messages {
