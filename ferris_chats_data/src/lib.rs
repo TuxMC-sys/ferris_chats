@@ -100,7 +100,7 @@ pub fn file_in_path(file_name: String) -> OsString {
             String::from("/.ferris_chats/"),
             file_name,
         ]
-            .join(""),
+        .join(""),
     )
-        .into_os_string()
+    .into_os_string()
 }

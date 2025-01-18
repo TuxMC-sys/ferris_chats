@@ -497,7 +497,7 @@ name = "ferris_chats_client"
 version = "0.1.0"
 dependencies = [
  "cursive",
- "ferris_chats_data",
+ "ferris_chats_data 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest",
  "tokio",
 ]
@@ -513,6 +513,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ferris_chats_data"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5465afa76fbd8511d7958d7d166f4a67aa064346b8d7d0a8de2117e0d5a7593"
+dependencies = [
+ "chrono",
+ "dirs",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "ferris_chats_server"
 version = "0.1.0"
 dependencies = [
@@ -520,7 +532,7 @@ dependencies = [
  "axum-server",
  "chrono",
  "ctrlc",
- "ferris_chats_data",
+ "ferris_chats_data 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio",
 ]
 

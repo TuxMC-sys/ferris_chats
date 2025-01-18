@@ -7,6 +7,6 @@ edition = "2021"
 axum = "0.8.1"
 axum-server = "0.7.1"
 tokio = { version = "1.43.0", features = ["rt-multi-thread"] }
-ferris_chats_data = {path = "../ferris_chats_data"}
 chrono = "0.4.39"
 ctrlc = "3.4.5"
+ferris_chats_data = "*"

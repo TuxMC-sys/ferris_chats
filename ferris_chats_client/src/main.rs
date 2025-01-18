@@ -1,5 +1,5 @@
-mod ui;
 mod client;
+mod ui;
 
 fn main() {
     todo!()
