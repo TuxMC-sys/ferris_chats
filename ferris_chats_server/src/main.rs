@@ -1,17 +1,3 @@
-#![warn(clippy::restriction, clippy::pedantic, clippy::nursery)]
-#![allow(
-    clippy::missing_docs_in_private_items,
-    clippy::implicit_return,
-    clippy::blanket_clippy_restriction_lints,
-    clippy::allow_attributes_without_reason,
-    clippy::wildcard_imports,
-    clippy::question_mark_used,
-    clippy::arithmetic_side_effects,
-    clippy::expect_used,
-    clippy::unwrap_used,
-    clippy::single_call_fn,
-    clippy::map_err_ignore
-)]
 extern crate alloc;
 mod server;
 use crate::server::*;
