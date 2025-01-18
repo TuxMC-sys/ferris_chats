@@ -1,7 +1,5 @@
-extern crate alloc;
 mod server;
 use crate::server::*;
-use alloc::sync::Arc;
 use axum::{
     routing::{get, post},
     Router,
@@ -10,9 +8,9 @@ use axum_server::Server;
 use core::net::SocketAddr;
 use ctrlc::set_handler;
 use ferris_chats_data::{AppState, Messages};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 #[tokio::main]
-async fn main()  {
+async fn main() {
     println!("Starting server. Use ctrl+c to exit and save.");
     let messages = AppState {
         data: Arc::new(Mutex::new(Messages::from_existing_else_new())),
@@ -34,5 +32,8 @@ async fn main()  {
         std::process::exit(0);
     })
     .expect("Error setting Ctrl-C handler");
-    Server::bind(SocketAddr::from(([0, 0, 0, 0], 3000))).serve(app.into_make_service()).await.unwrap();
+    Server::bind(SocketAddr::from(([0, 0, 0, 0], 3000)))
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }

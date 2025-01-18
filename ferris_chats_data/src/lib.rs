@@ -1,12 +1,12 @@
 use chrono::{DateTime, Utc};
+use core::error::Error;
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_vec};
 use std::ffi::OsString;
-use std::fs::{create_dir, read_to_string, write};
+use std::fs::{create_dir_all, read_to_string, write};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-
 static FILENAME: &str = "messages.json";
 
 #[derive(Clone)]
@@ -25,8 +25,8 @@ pub struct IncomingMessage {
     pub author: Option<String>,
 }
 impl Message {
-    pub fn new(content: String, author: Option<String>) -> Message {
-        Message {
+    pub fn new(content: String, author: Option<String>) -> Self {
+        Self {
             content,
             author: Some(author.unwrap_or_else(|| String::from("Unknown"))),
             time: Utc::now(),
@@ -44,21 +44,22 @@ impl Default for Messages {
 }
 
 impl Messages {
-    pub fn new() -> Self {
-        Messages {
+    pub const fn new() -> Self {
+        Self {
             messages: Vec::new(),
         }
     }
     pub fn from_existing_else_new() -> Self {
         Self::from_messages().unwrap_or_default()
     }
-    fn from_messages() -> Result<Self, Box<dyn std::error::Error>> {
+    fn from_messages() -> Result<Self, Box<dyn Error>> {
         Ok(from_str(
             read_to_string(file_in_path(String::from(FILENAME)))?.as_str(),
         )?)
     }
+    #[expect(clippy::unwrap_used)]
     pub fn save_messages(&self) {
-        let _ = create_dir(file_in_path(String::from(""))).is_ok();
+        _ = create_dir_all(file_in_path(String::new())).is_ok();
         write(file_in_path(String::from(FILENAME)), to_vec(&self).unwrap())
             .expect("Unable to write file");
     }
@@ -69,18 +70,18 @@ impl Messages {
     pub fn add_message(&mut self, message: Message) {
         self.messages.push(message);
     }
-    pub fn add_messages(&mut self, new: &mut Messages) {
+    pub fn add_messages(&mut self, new: &mut Self) {
         self.messages.append(&mut new.messages);
     }
-    pub fn concat_message(self, message: Message) -> Messages {
-        let mut messages = self.messages.clone();
+    pub fn concat_message(self, message: Message) -> Self {
+        let mut messages = self.messages;
         messages.push(message);
-        Messages { messages }
+        Self { messages }
     }
     pub fn get_range(self, start: usize, end: usize) -> Option<Self> {
         let message_slice = self.messages.get(start..end);
-        message_slice.map(|message_slice| Messages {
-            messages: message_slice.to_owned().to_vec(),
+        message_slice.map(|messages| Self {
+            messages: messages.to_owned(),
         })
     }
     pub fn message_count(&self) -> usize {
