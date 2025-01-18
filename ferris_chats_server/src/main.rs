@@ -10,11 +10,10 @@ use axum_server::Server;
 use core::net::SocketAddr;
 use ctrlc::set_handler;
 use ferris_chats_data::{AppState, Messages};
-use std::io::Result;
-use std::process::exit;
 use std::sync::Mutex;
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main()  {
+    println!("Starting server. Use ctrl+c to exit and save.");
     let messages = AppState {
         data: Arc::new(Mutex::new(Messages::from_existing_else_new())),
     };
@@ -32,9 +31,8 @@ async fn main() -> Result<()> {
             .lock()
             .expect("Mutex poisoned, messages not saved")
             .save_messages();
-        exit(0);
+        std::process::exit(0);
     })
     .expect("Error setting Ctrl-C handler");
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    Server::bind(addr).serve(app.into_make_service()).await
+    Server::bind(SocketAddr::from(([0, 0, 0, 0], 3000))).serve(app.into_make_service()).await.unwrap();
 }
