@@ -50,7 +50,7 @@ impl Messages {
         }
     }
     pub fn from_existing_else_new() -> Self {
-        Self::from_messages().unwrap_or(Messages::new())
+        Self::from_messages().unwrap_or_default()
     }
     fn from_messages() -> Result<Self, Box<dyn std::error::Error>> {
         Ok(from_str(
