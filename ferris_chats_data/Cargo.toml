@@ -5,7 +5,7 @@ edition = "2021"
 description = "This library provides data structures for ferris_chat."
 license = "GPL-3.0"
 repository = "https://github.com/TuxMC-sys/ferris_chats/"
-categories = ["web-programming::http-server", "asynchronous","development-tools"]
+categories = ["web-programming::http-server", "asynchronous","development-tools", "data-structures"]
 keywords = ["chatting", "DSA"]
 
 [dependencies]

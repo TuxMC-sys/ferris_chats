@@ -2,6 +2,11 @@
 name = "ferris_chats_server"
 version = "0.1.0"
 edition = "2021"
+description = "This binary provides a server for ferris_chat."
+license = "GPL-3.0"
+repository = "https://github.com/TuxMC-sys/ferris_chats/"
+categories = ["web-programming::http-server", "asynchronous", "command-line-utilities", "concurrency"]
+keywords = ["chatting", "server"]
 
 [dependencies]
 axum = "0.8.1"
