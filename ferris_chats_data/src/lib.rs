@@ -63,7 +63,6 @@ impl Messages {
         write(file_in_path(String::from(FILENAME)), to_vec(&self).unwrap())
             .expect("Unable to write file");
     }
-
     pub fn add(&mut self, content: String, author: Option<String>) {
         self.messages.push(Message::new(content, author));
     }

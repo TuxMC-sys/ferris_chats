@@ -16,11 +16,11 @@ async fn main() {
         data: Arc::new(Mutex::new(Messages::from_existing_else_new())),
     };
     let app = Router::new()
-        .route("/messages/{first}/{amount}", get(get_messages))
-        .route("/messages/time/{time}", get(messages_from_time))
-        .route("/messages/all", get(all_messages))
-        .route("/messages/count", get(message_count))
-        .route("/messages/endpoint", post(receive_message))
+        .route("/{first}/{amount}", get(get_messages))
+        .route("/time/{time}", get(messages_from_time))
+        .route("/all", get(all_messages))
+        .route("/count", get(message_count))
+        .route("/endpoint", post(receive_message))
         .with_state(messages.clone());
     set_handler(move || {
         messages

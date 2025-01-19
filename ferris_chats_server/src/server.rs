@@ -25,16 +25,17 @@ pub async fn messages_from_time(
     Path(time): Path<String>,
 ) -> Result<Json<Messages>, StatusCode> {
     let messages = messages.data.lock().unwrap().clone();
-    let Some(index) = messages.last_index_at_time(
+    if let Some(index) = messages.last_index_at_time(
         time.parse::<DateTime<Utc>>()
             .map_err(|_| StatusCode::BAD_REQUEST)?,
-    ) else {
-        return Err(StatusCode::NOT_FOUND);
-    };
-    messages
-        .clone()
-        .get_range(index, messages.message_count() + 1)
-        .map_or(Err(StatusCode::NOT_FOUND), |res| Ok(Json(res)))
+    ) {
+        messages
+            .clone()
+            .get_range(index, messages.message_count() + 1)
+            .map_or(Err(StatusCode::NOT_FOUND), |res| Ok(Json(res)))
+    } else {
+        Err(StatusCode::NOT_FOUND)
+    }
 }
 pub async fn receive_message(
     State(messages): State<AppState>,
