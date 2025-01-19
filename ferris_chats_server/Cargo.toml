@@ -1,6 +1,6 @@
 [package]
 name = "ferris_chats_server"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "This binary provides a server for ferris_chat."
 license = "GPL-3.0"
