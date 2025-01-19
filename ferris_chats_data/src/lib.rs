@@ -57,7 +57,6 @@ impl Messages {
             read_to_string(file_in_path(String::from(FILENAME)))?.as_str(),
         )?)
     }
-    #[expect(clippy::unwrap_used)]
     pub fn save_messages(&self) {
         _ = create_dir_all(file_in_path(String::new())).is_ok();
         write(file_in_path(String::from(FILENAME)), to_vec(&self).unwrap())
